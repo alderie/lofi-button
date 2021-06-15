@@ -1,0 +1,211 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+ body {
+   position:absolute;
+   top:0px;
+   left:0px;
+   bottom:0px;
+   right:0px;
+   overflow:hidden;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+ }
+
+ * {
+   user-select: none;
+ }
+
+.box {
+  box-shadow:0px 2px 10px rgba(0,0,0,.2);
+  position: relative;
+  color: white;
+  height: 220px;
+  width:220px;
+  background: rgb(32,32,38);
+  background: linear-gradient(165deg, rgba(32,32,38,1) 0%, rgba(34,34,34,1) 26%, rgba(19,19,23,1) 100%);
+  font-family: sans-serif;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.controls {
+  z-index:2;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  padding:10px;
+  cursor: pointer;
+}
+.button:hover {
+  width:32px;
+  height:32px;
+  transition:all 0.1s;
+}
+
+.icon {
+  width:30px;
+  height:30px;
+}
+
+.ring {
+  z-index:1;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  width:55%;
+  height:55%;
+  stroke-dasharray: 810;
+  transition: stroke-dash-offset 0.1s;
+  stroke-width:6.96px;
+}
+
+.bg-ring {
+  z-index:0;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  width:55%;
+  height:55%;
+}
+.bg-ring.active {
+  animation: spin 10s infinite linear;
+  animation-fill-mode: forwards;
+}
+
+.live-indicator {
+  position:absolute;
+  bottom:0px;
+  padding:2px;
+  font: bold 8px 'Montserrat', sans-serif;
+  background-color:#f23a7b;
+  border-radius:4px;
+  left: 50%;
+  transform: translate(-50%,-30%);
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%,-50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%,-50%) rotate(360deg);
+  }
+}
+
+.labels {
+  z-index:1;
+  display:flex;
+  position:absolute;
+  white-space: nowrap;
+  bottom:10%;
+  font: bold 11px 'Montserrat', sans-serif;
+  transition: left 0.1s, opacity 0.1s;
+}
+.labels .inactive, .labels .active {
+  margin:0px 2px;
+  cursor:pointer;
+}
+.labels .inactive {
+  opacity:0.2;
+}
+.labels .inactive:hover {
+  opacity:0.4;
+}
+.background {
+  opacity:0.2;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%) scale(0.9);
+  z-index:0;
+  user-select: none;
+  -webkit-user-drag: none;
+  z-index:0;
+}
+
+.header {
+  z-index:10;
+  display:flex;
+  position:absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  
+}
+.grab-region {
+  flex-grow:1;
+  padding:10px 0px 0px 0px;
+  -webkit-app-region: drag;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close {
+  padding:20px 20px 0px 20px;
+  width:12px;
+  height:12px;
+  margin-left:auto;
+  opacity:0.4;
+  cursor:pointer;
+}
+.close:hover {
+  opacity:1;
+}
+
+.volume {
+  z-index:4;
+  padding:20px 20px 0px 20px;
+  width:20px;
+  height:auto;
+  margin-left:auto;
+  opacity:0.4;
+  cursor:pointer;
+  user-select: none;
+}
+.volume:hover {
+  opacity:1;
+}
+
+.volume-bar {
+  z-index:3;
+  position:absolute;
+  height:220px;
+  width:60px;
+  left:0px;
+  background-color:rgb(32,32,38);
+}
+.volume-bar .bar {
+  position:absolute;
+  border-radius:6px;
+  width:80%;
+  margin:10%;
+  height:50px;
+  bottom:0px;
+  background-color:#36363B;
+}
+.volume-bar .bar:hover {
+  background-color:#5E5E62;
+  cursor:pointer;
+}
+
+.ring:hover path {
+  stroke-width:10px;
+}
