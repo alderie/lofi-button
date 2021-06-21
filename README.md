@@ -13,7 +13,7 @@ Lofi Button is a free player for lofi beats and radios on Youtube for your study
 
 ### Installation
 
-Head over to the *(Releases)[https://github.com/alderie/lofi-button/releases]* section to get the latest release of Lofi Button for your operating system
+Head over to the (Releases)[https://github.com/alderie/lofi-button/releases] section to get the latest release of Lofi Button for your operating system
 
 
 ### Features
