@@ -10,11 +10,14 @@ Lofi Button is a free player for lofi beats and radios on Youtube for your study
 - Built on the [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
 - Using Youtube's Embed Player API through React-Player
 
+### DISCLAIMER
+- I don't own the rights to any of the songs/channels/videos/background art in the application
+- At this point in time, all of the mixes in the application have no copyright issues on Youtube, and no special accredation requirements in their video descriptions, but if you plan on using the mixes for commercial reasons, I would recommend double checking in case of new copyright claims
+- **You can visit the respective video by clicking on the name of the mix**
 
 ### Installation
 
 Head over to the *[Releases](https://github.com/alderie/lofi-button/releases)* section to get the latest release of Lofi Button for your operating system
-
 
 ### Features
 
