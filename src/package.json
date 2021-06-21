@@ -1,7 +1,7 @@
 {
   "name": "lofi-button",
   "productName": "Lofi Button",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lofi Button is a free player for lofi beats and radios on Youtube for your studying and coding needs!",
   "main": "./main.prod.js",
   "author": {
