@@ -106,14 +106,10 @@
   },
   "keywords": [
     "electron",
-    "boilerplate",
+    "lofi",
     "react",
     "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "player"
   ],
   "jest": {
     "testURL": "http://localhost/",

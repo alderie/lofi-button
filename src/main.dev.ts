@@ -15,9 +15,6 @@ import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import Store from 'electron-store';
-
-const store = new Store({defaults:{volume: 0.5, activeList: 0}});
 
 export default class AppUpdater {
   constructor() {
