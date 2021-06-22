@@ -21,7 +21,9 @@ type ReactPlayerProgress = {
 const localStore = new Store({defaults:{volume:0.5, maxVolume: 0.5, activeSong: 0}});
 
 import SongList from './song_list.json';
+import './font-face.css';
 import './App.global.css';
+
 
 const ProgressIndicator = ({live, loadedPercent, playedPercent, playing, setPlayerProgress}: {live:boolean, loadedPercent:number, playedPercent:number, playing: boolean, setPlayerProgress: (percent: number) => void}) => {
 
@@ -104,7 +106,7 @@ const VolumeModal = ({visible, currentVolume, setVolume, onMouseLeave}: {visible
   const [height, setHeight] = useState(currentVolume*maxVolumeBarHeight);
   const [tracking, setTracking] = useState(false);
 
-  const adjustVolume = (yPos:number) => {
+  const adjustVolume = (yPos: number) => {
 
     // Update height relative to yPos
     setHeight(Math.min(window.innerHeight-yPos, maxVolumeBarHeight))
@@ -229,7 +231,10 @@ const Controls = () => {
   }
 
   useLayoutEffect(()=>{
-    changeSong(localStore.get("activeSong"));
+    // Wait for font load before centering
+    document.fonts.ready.then(()=>{
+      changeSong(localStore.get("activeSong"));
+    })
   }, [])
 
   return (
@@ -267,7 +272,7 @@ const Controls = () => {
                  onClick={()=>{
                    changeSong(index);
                  }}>{label.name}</div>
-          ):(<div className='active' 
+          ):(<div key={-1} className='active' 
             onClick={()=>{
               onVisitSong(index);
             }}
