@@ -18,7 +18,7 @@ type ReactPlayerProgress = {
   loadedSeconds: number
 }
 
-const localStore = new Store({defaults:{volume:0.5, activeSong: 0, maxVolume: 0.5}});
+const localStore = new Store({defaults:{volume:0.5, maxVolume: 0.5, activeSong: 0}});
 
 import SongList from './song_list.json';
 import './App.global.css';
@@ -26,6 +26,7 @@ import './App.global.css';
 const ProgressIndicator = ({live, loadedPercent, playedPercent, playing, setPlayerProgress}: {live:boolean, loadedPercent:number, playedPercent:number, playing: boolean, setPlayerProgress: (percent: number) => void}) => {
 
   const [tracking, setTracking] = useState(false);
+  const maxStrokeLength = 805;
 
   const updatePlayerProgress = (x:number, y:number) => {
     let centerX = window.innerWidth/2;
@@ -85,9 +86,9 @@ const ProgressIndicator = ({live, loadedPercent, playedPercent, playing, setPlay
               <g transform="matrix(0.554628,0,0,0.554628,1282.46,978.149)">
                   <g transform="matrix(1.80301,0,0,1.80301,-1421.01,-1057.63)">
                       <path className='ring-path' d="M1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622ZM1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622Z" 
-                      style={{fill:"none", stroke:"grey", opacity:0.4, strokeDashoffset:((1-loadedPercent)*805)}}/>
+                      style={{fill:"none", stroke:"grey", opacity:0.4, strokeDashoffset:((1-loadedPercent)*maxStrokeLength)}}/>
                       <path className='ring-path' d="M1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622ZM1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622Z" 
-                      style={{fill:"none", stroke:"white", strokeDashoffset:((1-playedPercent)*805)}}/>
+                      style={{fill:"none", stroke:"white", strokeDashoffset:((1-playedPercent)*maxStrokeLength)}}/>
                   </g>
               </g>
           </g>
@@ -99,16 +100,17 @@ const ProgressIndicator = ({live, loadedPercent, playedPercent, playing, setPlay
 
 const VolumeModal = ({visible, currentVolume, setVolume, onMouseLeave}: {visible:boolean, currentVolume:number, setVolume: React.Dispatch<React.SetStateAction<number>>, onMouseLeave: Function})=> {
 
-  const [height, setHeight] = useState(currentVolume*150);
+  const maxVolumeBarHeight = 160;
+  const [height, setHeight] = useState(currentVolume*maxVolumeBarHeight);
   const [tracking, setTracking] = useState(false);
 
   const adjustVolume = (yPos:number) => {
 
     // Update height relative to yPos
-    setHeight(window.innerHeight-yPos)
+    setHeight(Math.min(window.innerHeight-yPos, maxVolumeBarHeight))
 
     // Update Volume relative to percent of bar height
-    let volume = Math.max(((window.innerHeight-yPos)/150), 0)
+    let volume = Math.max(((window.innerHeight-yPos)/maxVolumeBarHeight), 0)
     localStore.set("volume", volume);
 
     setVolume(volume * localStore.get("maxVolume"))
@@ -226,7 +228,6 @@ const Controls = () => {
     }
   }
 
-  
   useLayoutEffect(()=>{
     changeSong(localStore.get("activeSong"));
   }, [])
