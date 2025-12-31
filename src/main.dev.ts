@@ -4,20 +4,35 @@
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
  * through IPC.
- *
- * When running `yarn build` or `yarn build:main`, this file is compiled to
- * `./src/main.prod.js` using webpack. This gives us some performance wins.
  */
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import Store from 'electron-store';
 
-Store.initRenderer();
+// Initialize electron-store (ESM module) with defaults
+let store: any;
+(async () => {
+  const module = await import('electron-store');
+  const Store = module.default;
+  store = new Store({
+    defaults: {
+      volume: 0.5,
+      maxVolume: 0.5,
+      activeSong: 0,
+    },
+  });
+})();
+
+// IPC handlers for storage
+ipcMain.handle('store:get', (_event, key: string) => {
+  return store?.get(key);
+});
+
+ipcMain.handle('store:set', (_event, key: string, value: any) => {
+  store?.set(key, value);
+});
 
 export default class AppUpdater {
   constructor() {
@@ -38,7 +53,8 @@ if (
   process.env.NODE_ENV === 'development' ||
   process.env.DEBUG_PROD === 'true'
 ) {
-  require('electron-debug')();
+  // DevTools disabled - uncomment to enable
+  // require('electron-debug')();
 }
 
 const installExtensions = async () => {
@@ -55,12 +71,14 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
+  console.log('Creating window...');
+  // Disabled extension installation to avoid errors
+  // if (
+  //   process.env.NODE_ENV === 'development' ||
+  //   process.env.DEBUG_PROD === 'true'
+  // ) {
+  //   await installExtensions();
+  // }
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -78,17 +96,42 @@ const createWindow = async () => {
     frame: false,
     icon: getAssetPath('logo.png'),
     fullscreenable: false,
-    resizable: false,
+    resizable: true,
     webPreferences: {
-      nodeIntegration: true,
+      preload: path.join(__dirname, '../preload/index.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
     },
   });
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  // Load from Vite dev server in development, or from file in production
+  const isDev = process.env.NODE_ENV === 'development';
+  if (isDev) {
+    const rendererUrl = process.env.ELECTRON_RENDERER_URL;
+    console.log('Loading renderer from URL:', rendererUrl);
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+    if (rendererUrl) {
+      mainWindow.loadURL(rendererUrl);
+      mainWindow.webContents.openDevTools(); // Open DevTools automatically
+    } else {
+      mainWindow.loadURL('http://localhost:5173');
+    }
+  } else {
+    const filePath = path.join(__dirname, '../renderer/index.html');
+    console.log('Loading renderer from file:', filePath);
+    mainWindow.loadFile(filePath);
+  }
+
+  // Add error handling for failed loads
+  mainWindow.webContents.on(
+    'did-fail-load',
+    (event, errorCode, errorDescription) => {
+      console.error('Failed to load:', errorCode, errorDescription);
+    }
+  );
+
+  mainWindow.on('ready-to-show', () => {
+    console.log('Window ready to show');
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -100,6 +143,10 @@ const createWindow = async () => {
     }
   });
 
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('Web contents did finish load');
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -108,9 +155,9 @@ const createWindow = async () => {
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
-  mainWindow.webContents.on('new-window', (event, url) => {
-    event.preventDefault();
-    shell.openExternal(url);
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url);
+    return { action: 'deny' };
   });
 
   // Remove this if your app does not use auto updates
