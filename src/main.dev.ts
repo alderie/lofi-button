@@ -112,7 +112,7 @@ const createWindow = async () => {
 
     if (rendererUrl) {
       mainWindow.loadURL(rendererUrl);
-      mainWindow.webContents.openDevTools(); // Open DevTools automatically
+      // mainWindow.webContents.openDevTools(); // Open DevTools automatically
     } else {
       mainWindow.loadURL('http://localhost:5173');
     }
