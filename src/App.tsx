@@ -304,7 +304,11 @@ const Controls = () => {
     // Wait for font load before centering
     document.fonts.ready.then(async () => {
       const activeSongIndex = await window.electronAPI.store.get('activeSong');
-      changeSong(activeSongIndex);
+      // Validate the index is within bounds
+      const validIndex = (activeSongIndex !== undefined && activeSongIndex >= 0 && activeSongIndex < list.length)
+        ? activeSongIndex
+        : 0;
+      changeSong(validIndex);
     });
   }, []);
 
@@ -316,6 +320,11 @@ const Controls = () => {
       setVolume(storedVolume * maxVolume);
     })();
   }, []);
+
+  // Safety check: don't render until we have a valid song
+  if (!list || !list[activeSong]) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

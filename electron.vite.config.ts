@@ -6,6 +6,7 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     build: {
+      outDir: 'dist/main',
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/main.dev.ts')
@@ -16,6 +17,7 @@ export default defineConfig({
   preload: {
     plugins: [externalizeDepsPlugin()],
     build: {
+      outDir: 'dist/preload',
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/preload.ts')
@@ -37,6 +39,7 @@ export default defineConfig({
       exclude: ['electron', 'electron-store']
     },
     build: {
+      outDir: 'dist/renderer',
       rollupOptions: {
         input: resolve(__dirname, 'src/index.html'),
         // External Node modules since we use nodeIntegration: true

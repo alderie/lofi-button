@@ -3,7 +3,7 @@
   "productName": "Lofi Button",
   "version": "1.0.1",
   "description": "Electron build system based on Electron-React-Boilerplate for the Lofi Button application",
-  "main": "./out/main/index.js",
+  "main": "./dist/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
@@ -77,7 +77,6 @@
       "category": "Development"
     },
     "directories": {
-      "app": "src",
       "buildResources": "assets",
       "output": "release"
     },
