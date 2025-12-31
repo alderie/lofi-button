@@ -26,12 +26,10 @@ body {
   height: 220px;
   width: 220px;
   background: rgb(32, 32, 38);
-  background: linear-gradient(
-    165deg,
-    rgba(32, 32, 38, 1) 0%,
-    rgba(34, 34, 34, 1) 26%,
-    rgba(19, 19, 23, 1) 100%
-  );
+  background: linear-gradient(165deg,
+      rgba(32, 32, 38, 1) 0%,
+      rgba(34, 34, 34, 1) 26%,
+      rgba(19, 19, 23, 1) 100%);
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
@@ -52,10 +50,46 @@ body {
   justify-content: center;
 }
 
+.time-indicator {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  font: 9px 'Montserrat', sans-serif;
+  opacity: 0.35;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.currentTime {
+  margin-bottom: 2px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.ring-path.buffering {
+  animation: pulse-ring 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .button {
   padding: 10px;
   cursor: pointer;
 }
+
 .button:hover {
   width: 32px;
   height: 32px;
@@ -89,6 +123,7 @@ body {
   width: 55%;
   height: 55%;
 }
+
 .bg-ring.active {
   animation: spin 10s infinite linear;
   animation-fill-mode: forwards;
@@ -109,6 +144,7 @@ body {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
+
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }
@@ -123,17 +159,21 @@ body {
   font: bold 11px 'Montserrat', sans-serif;
   transition: left 0.1s, opacity 0.1s;
 }
+
 .labels .inactive,
 .labels .active {
   margin: 0px 2px;
   cursor: pointer;
 }
+
 .labels .inactive {
   opacity: 0.2;
 }
+
 .labels .inactive:hover {
   opacity: 0.4;
 }
+
 .background {
   opacity: 0.2;
   position: absolute;
@@ -154,6 +194,7 @@ body {
   left: 0px;
   right: 0px;
 }
+
 .grab-region {
   flex-grow: 1;
   padding: 10px 0px 0px 0px;
@@ -171,6 +212,7 @@ body {
   opacity: 0.4;
   cursor: pointer;
 }
+
 .close:hover {
   opacity: 1;
 }
@@ -185,6 +227,7 @@ body {
   cursor: pointer;
   user-select: none;
 }
+
 .volume:hover {
   opacity: 1;
 }
@@ -197,6 +240,7 @@ body {
   left: 0px;
   background-color: rgb(32, 32, 38);
 }
+
 .volume-bar .bar {
   position: absolute;
   border-radius: 6px;
@@ -206,6 +250,7 @@ body {
   bottom: 0px;
   background-color: #36363b;
 }
+
 .volume-bar .bar:hover {
   background-color: #5e5e62;
   cursor: pointer;

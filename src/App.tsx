@@ -26,12 +26,14 @@ const ProgressIndicator = ({
   loadedPercent,
   playedPercent,
   playing,
+  buffering,
   setPlayerProgress,
 }: {
   live: boolean;
   loadedPercent: number;
   playedPercent: number;
   playing: boolean;
+  buffering: boolean;
   setPlayerProgress: (percent: number) => void;
 }) => {
   const [tracking, setTracking] = useState(false);
@@ -110,7 +112,7 @@ const ProgressIndicator = ({
             <g transform="matrix(0.554628,0,0,0.554628,1282.46,978.149)">
               <g transform="matrix(1.80301,0,0,1.80301,-1421.01,-1057.63)">
                 <path
-                  className="ring-path"
+                  className={`ring-path ${buffering ? 'buffering' : ''}`}
                   d="M1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622ZM1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622Z"
                   style={{
                     fill: 'none',
@@ -120,7 +122,7 @@ const ProgressIndicator = ({
                   }}
                 />
                 <path
-                  className="ring-path"
+                  className={`ring-path ${buffering ? 'buffering' : ''}`}
                   d="M1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622ZM1009.98,678.622C1081.63,678.622 1139.8,736.793 1139.8,808.443C1139.8,880.093 1081.63,938.264 1009.98,938.264C938.331,938.264 880.16,880.093 880.16,808.443C880.16,736.793 938.331,678.622 1009.98,678.622Z"
                   style={{
                     fill: 'none',
@@ -200,12 +202,27 @@ const Controls = () => {
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [bufferProgress, setBufferProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [buffering, setBuffering] = useState(false);
 
   const [volumeModalOpen, setVolumeModalOpen] = useState(false);
   const [volume, setVolume] = useState(0.5);
 
   const player = useRef<any>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const formatTime = (seconds: number): string => {
+    if (!seconds || !isFinite(seconds)) return '0:00';
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+
+    if (hours > 0) {
+      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const togglePlayMode = () => {
     setPlaying(!playing);
@@ -231,6 +248,7 @@ const Controls = () => {
   const updateProgress = (data: ReactPlayerProgress) => {
     setProgress(data.played);
     setBufferProgress(data.loaded);
+    setCurrentTime(data.playedSeconds);
 
     // Played until completion
     if (data.played == 1) {
@@ -271,6 +289,8 @@ const Controls = () => {
     await window.electronAPI.store.set('activeSong', index);
     setProgress(0);
     setBufferProgress(0);
+    setDuration(0);
+    setCurrentTime(0);
   };
 
   const onVisitSong = (index: number) => {
@@ -330,11 +350,17 @@ const Controls = () => {
               togglePlayMode();
             }}
           />
+          {!list[activeSong].live && duration > 0 && (
+            <div className="time-indicator">
+              <div className="currentTime">{formatTime(currentTime)}</div>
+            </div>
+          )}
         </div>
 
         <ProgressIndicator
           live={list[activeSong].live}
           playing={playing}
+          buffering={buffering}
           playedPercent={progress}
           loadedPercent={bufferProgress}
           setPlayerProgress={setPlayerProgress}
@@ -377,6 +403,15 @@ const Controls = () => {
             console.error('Failed to play track');
           }}
           onStart={onPlayerStart}
+          onBuffer={() => {
+            setBuffering(true);
+          }}
+          onBufferEnd={() => {
+            setBuffering(false);
+          }}
+          onDuration={(duration) => {
+            setDuration(duration);
+          }}
           onProgress={(data) => {
             updateProgress(data);
           }}
